@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MovieModule } from './movie/movie.module';
+import { AuthModule } from './auth/auth.module';
 import { Movie } from './movie/dto/movie.dto';
+import { MovieModule } from './movie/movie.module';
 import { User } from './user/dto/user.dto';
 import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,13 +16,11 @@ import { AuthModule } from './auth/auth.module';
       password: '123456',
       database: 'movie-manager',
       entities: [Movie, User],
-      synchronize: false,
+      synchronize: true,
     }),
     MovieModule,
     UserModule,
     AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

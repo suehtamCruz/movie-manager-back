@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 
-@ApiTags('Authentication')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -26,7 +26,17 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBody({ type: LoginDto })
+  @ApiBody({
+    type: LoginDto,
+    examples: {
+      Login: {
+        value: {
+          username: 'admin',
+          password: 'admin',
+        },
+      },
+    },
+  })
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(
