@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Movie } from './dto/movie.dto';
 import { MovieModel } from './interfaces/movie.model';
@@ -9,13 +10,16 @@ import { MovieService } from './movie.service';
 export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   @ApiOperation({ summary: 'Get all movies' })
   @ApiResponse({ status: 200, description: 'Return all movies', type: [Movie] })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async findAll(): Promise<Movie[]> {
-    return this.movieService.findAll();
+    return await this.movieService.findAll();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @ApiOperation({
     summary: 'Create a new movie',
@@ -40,7 +44,8 @@ export class MovieController {
     description: 'The movie has been successfully created',
     type: Movie,
   })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async create(@Body() movie: MovieModel): Promise<Movie> {
-    return this.movieService.create(movie);
+    return await this.movieService.create(movie);
   }
 }
