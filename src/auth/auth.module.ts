@@ -9,6 +9,8 @@ import { environment } from 'environments/environment';
 import { UserService } from 'user/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'user/dto/user.dto';
+import { AuthMemoryService } from './auth.memory.service';
+import { UserMemoryService } from 'user/user.memory.service';
 
 @Module({
   imports: [
@@ -20,7 +22,13 @@ import { User } from 'user/dto/user.dto';
     }),
     TypeOrmModule.forFeature([User]),
   ],
-  providers: [AuthService, JwtStrategy, UserService],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    UserService,
+    AuthMemoryService,
+    UserMemoryService,
+  ],
   exports: [AuthService],
   controllers: [AuthController],
 })
