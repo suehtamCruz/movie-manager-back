@@ -11,12 +11,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Movie } from './dto/movie.dto';
 import { MovieModel } from './interfaces/movie.model';
-import { MovieService } from './movie.service';
+import { MovieMemoryService } from './movie.memory.service';
 
 @ApiTags('movies')
 @Controller('movie')
 export class MovieController {
-  constructor(private readonly movieService: MovieService) {}
+  constructor(private readonly movieService: MovieMemoryService) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
@@ -65,7 +65,7 @@ export class MovieController {
     description: 'The movie has been successfully deleted',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async delete(@Param('id') movieId: number): Promise<void> {
-    await this.movieService.delete(movieId);
+  async delete(@Param('id') movieId: string): Promise<void> {
+    await this.movieService.delete(Number(movieId));
   }
 }
