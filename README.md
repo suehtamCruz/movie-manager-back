@@ -1,73 +1,178 @@
+# Movie Manager Backend
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Descrição
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Este projeto é uma API RESTful para gerenciamento de filmes, construída com NestJS. A aplicação permite criar, listar e excluir filmes, além de gerenciar usuários e autenticação.
 
-## Description
+## Características
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Autenticação JWT
+- Documentação com Swagger
+- Duas opções de armazenamento de dados:
+  - Em memória (usando serviços com sufixo `.memory`)
+  - Banco de dados PostgreSQL
 
-## Installation
+## Estrutura do Projeto
 
-```bash
-$ yarn install
+O projeto está organizado nos seguintes módulos:
+
+- **Auth**: Gerenciamento de autenticação e autorização
+- **User**: Gerenciamento de usuários
+- **Movie**: Gerenciamento de filmes
+
+Cada módulo possui suas próprias entidades, DTOs, controllers e serviços.
+
+## Opções de Armazenamento
+
+### 1. Armazenamento em Memória
+
+Para utilizar o armazenamento em memória, você deve usar os serviços com sufixo `.memory`:
+
+- `MovieMemoryService`
+- `UserMemoryService`
+- `AuthMemoryService`
+
+Estes serviços armazenam os dados em arrays na memória e são úteis para testes e desenvolvimento rápido.
+
+### 2. Armazenamento em PostgreSQL
+
+Para utilizar o armazenamento em banco de dados, você deve configurar o PostgreSQL e usar os serviços padrão:
+
+- `MovieService`
+- `UserService`
+- `AuthService`
+
+## Configuração do Banco de Dados
+
+Para configurar o banco de dados PostgreSQL, siga os passos abaixo:
+
+1. Crie um banco de dados no PostgreSQL
+2. Execute os seguintes scripts SQL para criar as tabelas necessárias:
+
+```sql
+CREATE TABLE movie (
+    Id SERIAL PRIMARY KEY,
+    Name VARCHAR(40) NOT NULL,
+    Description VARCHAR(200) NOT NULL,
+    Rate NUMERIC NOT NULL
+);
+
+CREATE TABLE "user" (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(40) NOT NULL,
+    pass VARCHAR(100) NOT NULL
+);
 ```
 
-## Running the app
+3. Configure a conexão com o banco de dados no arquivo `app.module.ts`:
 
-```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+```typescript
+TypeOrmModule.forRoot({
+  type: 'postgres',
+  host: 'localhost',
+  port: 5432,
+  username: 'seu_usuario',
+  password: 'sua_senha',
+  database: 'movie_manager',
+  entities: [__dirname + '/**/*.entity{.ts,.js}'],
+  synchronize: false, // Defina como true apenas em desenvolvimento
+}),
 ```
 
-## Test
+## Instalação
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+# Instalar dependências
+$ npm install
 ```
 
-## Support
+## Configuração do Ambiente
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 
-## Stay in touch
+```
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=seu_usuario
+DB_PASSWORD=sua_senha
+DB_DATABASE=movie_manager
+JWT_SECRET=seu_segredo_jwt
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Executando a Aplicação
 
-## License
+```bash
+# Modo de desenvolvimento
+$ npm run start
 
-Nest is [MIT licensed](LICENSE).
+# Modo de observação (recarrega automaticamente)
+$ npm run start:dev
+
+# Modo de produção
+$ npm run start:prod
+```
+
+## Alternando entre Armazenamento em Memória e PostgreSQL
+
+Para alternar entre os modos de armazenamento, você precisa modificar os controllers para injetar os serviços apropriados:
+
+### Para usar armazenamento em memória:
+
+1. No arquivo `movie.controller.ts`:
+```typescript
+constructor(private readonly movieService: MovieMemoryService) {}
+```
+
+2. No arquivo `user.controller.ts`:
+```typescript
+constructor(private readonly userService: UserMemoryService) {}
+```
+
+3. No arquivo `auth.controller.ts`:
+```typescript
+constructor(private authService: AuthMemoryService) {}
+```
+
+### Para usar armazenamento em PostgreSQL:
+
+1. No arquivo `movie.controller.ts`:
+```typescript
+constructor(private readonly movieService: MovieService) {}
+```
+
+2. No arquivo `user.controller.ts`:
+```typescript
+constructor(private readonly userService: UserService) {}
+```
+
+3. No arquivo `auth.controller.ts`:
+```typescript
+constructor(private authService: AuthService) {}
+```
+
+## Documentação da API
+
+A documentação da API está disponível através do Swagger UI. Após iniciar a aplicação, acesse:
+
+```
+http://localhost:3000/api
+```
+
+## Endpoints Principais
+
+- `GET /movie` - Listar todos os filmes
+- `POST /movie` - Criar um novo filme
+- `DELETE /movie/:id` - Excluir um filme
+
+- `GET /user` - Listar todos os usuários
+- `POST /user` - Criar um novo usuário
+
+- `POST /auth/login` - Autenticar um usuário
+ 
+## Licença
+
+Este projeto está licenciado sob a licença MIT.
