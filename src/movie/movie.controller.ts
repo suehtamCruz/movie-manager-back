@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Movie } from './dto/movie.dto';
@@ -47,5 +55,17 @@ export class MovieController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async create(@Body() movie: MovieModel): Promise<Movie> {
     return await this.movieService.create(movie);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a movie' })
+  @ApiResponse({
+    status: 200,
+    description: 'The movie has been successfully deleted',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async delete(@Param('id') movieId: number): Promise<void> {
+    await this.movieService.delete(movieId);
   }
 }

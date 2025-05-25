@@ -22,4 +22,8 @@ export class MovieService {
     movie.Rate = movieData.rate;
     return this.movieRepository.save(movie);
   }
+
+  async delete(movieId: number): Promise<void> {
+    await this.movieRepository.delete(movieId);
+  }
 }
